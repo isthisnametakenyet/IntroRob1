@@ -1,2 +1,3 @@
+git -c user.name="isthisnametakenyet" -c user.email="casid7@outlook.es" commit -m "bruh"
 
  cago en dios ya funcuona

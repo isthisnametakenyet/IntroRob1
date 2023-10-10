@@ -1,5 +1,7 @@
 import neuron
 import random
+import numpy
+
 
 def SingleNeuron():
     inputs = input("Input the inputs: ")
@@ -21,6 +23,7 @@ def SingleNeuron():
     print('Output: ' + str(thisNeuron.output))
     print('Loss: ' + str(thisNeuron.loss))
 
+
 def ClasificadorNetwork():
     inputs = input("Input the inputs: ")
     inputs = inputs.split(',')
@@ -32,10 +35,10 @@ def ClasificadorNetwork():
     for i in range(len(inputs)):
         weights1.append(random.uniform(0, 1))
         weights2.append(random.uniform(0, 1))
-    #print(weights1)
+    # print(weights1)
 
-    bias1 = random.uniform(0,1)
-    bias2 = random.uniform(0,1)
+    bias1 = random.uniform(0, 1)
+    bias2 = random.uniform(0, 1)
 
     x1Neuron = neuron.Neuron(weights1, bias1)
     x2Neuron = neuron.Neuron(weights2, bias2)
@@ -58,9 +61,9 @@ def ClasificadorNetwork():
         weights2.append(random.uniform(0, 1))
         weights3.append(random.uniform(0, 1))
 
-    z1Neuron = neuron.Neuron(weights1, random.uniform(0,1))
-    z2Neuron = neuron.Neuron(weights2, random.uniform(0,1))
-    z3Neuron = neuron.Neuron(weights3, random.uniform(0,1))
+    z1Neuron = neuron.Neuron(weights1, random.uniform(0, 1))
+    z2Neuron = neuron.Neuron(weights2, random.uniform(0, 1))
+    z3Neuron = neuron.Neuron(weights3, random.uniform(0, 1))
 
     zInput = str(x1Neuron.output) + ',' + str(x2Neuron.output)
     zInput = zInput.split(',')
@@ -76,7 +79,6 @@ def ClasificadorNetwork():
     z3Neuron.addInputs(zInput)
     z3Neuron.calcZ()
     z3Neuron.calcSigmoid()
-
 
     ##LAYER 3
 
@@ -108,7 +110,53 @@ def ClasificadorNetwork():
     print("OUTPUT Z4: " + str(z4Neuron.output))
     print("OUTPUT Z5: " + str(z5Neuron.output))
 
-if __name__ == '__main__':
-    #SingleNeuron()
-    ClasificadorNetwork()
 
+def DynamicNetwork():
+    inputs = input("Input the inputs: ")
+    inputs = inputs.split(',')
+
+    width = int(input("Num Layers: "))
+    height = []
+
+    i = 0
+    while (i < width):
+        height.append(int(input("Num Neurons Layer " + str(i) + ": ")))
+        i = i + 1
+
+    layers = [[]]
+
+    ##LAYER 0
+    j = 0
+    weights = []
+    tmp_layer = []
+    while (j < height[0]):
+        for i in range(len(inputs)):
+            weights.append(random.uniform(0, 1))
+
+        tmp_layer.append(neuron.Neuron(weights, random.uniform(0, 1)))
+        j = j + 1
+
+    layers[0] = tmp_layer
+
+    ##OTHER LAYERS
+    j = 1
+    while (j < width):  # Por capa
+        tmp_layer = []
+
+        for n in range(height[j]):  # Por neurona de esta capa
+            weights = []
+            for i in range(height[j - 1]):  # Por input de la capa anterior
+                weights.append(random.uniform(0, 1))
+
+            tmp_layer.append(neuron.Neuron(weights, random.uniform(0, 1)))
+
+        layers.append(tmp_layer)
+        j = j + 1
+
+    print(layers)
+
+
+if __name__ == '__main__':
+    # SingleNeuron()
+    # ClasificadorNetwork()
+    DynamicNetwork()

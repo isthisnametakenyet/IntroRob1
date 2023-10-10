@@ -16,7 +16,7 @@ class Neuron:
         for i in self.weights:
             # print('i: ' + i)
             # print('inpt: ' + inputs[a])
-            self.tmp.append(int(i) * int(inputs[a]))
+            self.tmp.append(float(i) * float(inputs[a]))
             a = a + 1
 
     def calcZ(self):

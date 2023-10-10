@@ -127,16 +127,22 @@ def DynamicNetwork():
 
     ##LAYER 0
     j = 0
-    weights = []
     tmp_layer = []
     while (j < height[0]):
+        weights = []
+        #print(j)
         for i in range(len(inputs)):
             weights.append(random.uniform(0, 1))
+            #print(inputs)
 
         tmp_layer.append(neuron.Neuron(weights, random.uniform(0, 1)))
         j = j + 1
 
     layers[0] = tmp_layer
+
+    #print(str(layers[0][0].weights))
+    #print(str(layers[0][1].weights))
+    #print(str(layers[0][2].weights))
 
     ##OTHER LAYERS
     j = 1
@@ -153,7 +159,36 @@ def DynamicNetwork():
         layers.append(tmp_layer)
         j = j + 1
 
-    print(layers)
+    #print(layers)
+    #print('Weights de 0-0 : ' + str(layers[0][0].weights) + '  Inputs:' + str(inputs))
+
+
+    ##CALC OUTPUTS
+    for neur in layers[0]: # Usamos el input de teclado para capa 0
+        neur.addInputs(inputs)
+        neur.calcZ()
+        neur.calcSigmoid()
+        print("   Layer 0 output: " + str(neur.output))
+
+    l = 1
+    while (l < width):  # Por capa
+        n = 0
+        while (n < height[l]): # Por neurona de esta capa
+            newInput = ''
+            for i in layers[l-1]:
+                newInput += str(i.output) + ','
+
+            print("Layer " + str(l) + " inputs: " + str(newInput))
+
+            layers[l][n].addInputs(newInput.split(','))
+            layers[l][n].calcZ()
+            layers[l][n].calcSigmoid()
+
+            print("   Layer " + str(l) + " output: " + str(layers[l][n].output))
+            n = n + 1
+        l += 1
+
+
 
 
 if __name__ == '__main__':

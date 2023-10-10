@@ -168,7 +168,7 @@ def DynamicNetwork():
         neur.addInputs(inputs)
         neur.calcZ()
         neur.calcSigmoid()
-        print("   Layer 0 output: " + str(neur.output))
+        #print("   Layer 0 output: " + str(neur.output))
 
     l = 1
     while (l < width):  # Por capa
@@ -184,14 +184,32 @@ def DynamicNetwork():
             layers[l][n].calcZ()
             layers[l][n].calcSigmoid()
 
-            print("   Layer " + str(l) + " output: " + str(layers[l][n].output))
+            #print("   Layer " + str(l) + " output: " + str(layers[l][n].output))
             n = n + 1
         l += 1
 
+    ##FINAL OUTPUT
+    j = 0
+    result = []
+    for i in layers[width - 1]:
+        print("Final Output Neuron " + str(j) + ": " + str(i.output))
+        result.append(i.output)
+        j += 1
 
-
+    return result
 
 if __name__ == '__main__':
+    expectation = input("Expected OUtput: ")
+    expectation = expectation.split(',')
+
     # SingleNeuron()
     # ClasificadorNetwork()
-    DynamicNetwork()
+    result = DynamicNetwork()
+
+    err = []
+    i = 0
+    for r in result:
+        err.append(r - float(expectation[i]))
+        i += 1
+
+    print("Error margin: " + str(err))

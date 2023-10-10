@@ -1,5 +1,6 @@
 import neuron
 import random
+import network_dyn
 import numpy
 
 
@@ -199,17 +200,27 @@ def DynamicNetwork():
     return result
 
 if __name__ == '__main__':
+    # SingleNeuron()
+    # ClasificadorNetwork()
+    # DynamicNetwork()
+
+    ## Dynamic Network
+    inputs = input("Input the inputs: ")
+    inputs = inputs.split(',')
+
+    width = int(input("Num Layers: "))
+    height = []
+
+    i = 0
+    while (i < width):
+        height.append(int(input("Num Neurons Layer " + str(i) + ": ")))
+        i = i + 1
+
+    network = network_dyn.NetworkDyn(inputs,width,height)
+    network.calc_outputs(inputs)
+
     expectation = input("Expected OUtput: ")
     expectation = expectation.split(',')
 
-    # SingleNeuron()
-    # ClasificadorNetwork()
-    result = DynamicNetwork()
-
-    err = []
-    i = 0
-    for r in result:
-        err.append(r - float(expectation[i]))
-        i += 1
-
+    err = network.calc_error(expectation)
     print("Error margin: " + str(err))

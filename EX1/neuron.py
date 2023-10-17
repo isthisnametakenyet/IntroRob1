@@ -23,10 +23,11 @@ class Neuron:
         for i in self.tmp:
             self.z = self.z + i
         # print(self.z)
-        self.z + self.bias
+        self.z = self.z + self.bias
 
     def calcSigmoid(self):
         self.output = 1 / (1 + (math.exp(1) ** -self.z))
+        print("1/ (1 + (e^-" + str(self.z) + ") = " + str(self.output))
 
     def calcMax(self):
         max(0.1 * self.z, self.z)

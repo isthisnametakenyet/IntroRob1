@@ -224,3 +224,6 @@ if __name__ == '__main__':
 
     err = network.calc_error(expectation)
     print("Error margin: " + str(err))
+
+    ## Runnear Backward Propagation
+

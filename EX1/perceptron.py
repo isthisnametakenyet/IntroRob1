@@ -131,19 +131,19 @@ def DynamicNetwork():
     tmp_layer = []
     while (j < height[0]):
         weights = []
-        #print(j)
+        # print(j)
         for i in range(len(inputs)):
             weights.append(random.uniform(0, 1))
-            #print(inputs)
+            # print(inputs)
 
         tmp_layer.append(neuron.Neuron(weights, random.uniform(0, 1)))
         j = j + 1
 
     layers[0] = tmp_layer
 
-    #print(str(layers[0][0].weights))
-    #print(str(layers[0][1].weights))
-    #print(str(layers[0][2].weights))
+    # print(str(layers[0][0].weights))
+    # print(str(layers[0][1].weights))
+    # print(str(layers[0][2].weights))
 
     ##OTHER LAYERS
     j = 1
@@ -160,23 +160,22 @@ def DynamicNetwork():
         layers.append(tmp_layer)
         j = j + 1
 
-    #print(layers)
-    #print('Weights de 0-0 : ' + str(layers[0][0].weights) + '  Inputs:' + str(inputs))
-
+    # print(layers)
+    # print('Weights de 0-0 : ' + str(layers[0][0].weights) + '  Inputs:' + str(inputs))
 
     ##CALC OUTPUTS
-    for neur in layers[0]: # Usamos el input de teclado para capa 0
+    for neur in layers[0]:  # Usamos el input de teclado para capa 0
         neur.addInputs(inputs)
         neur.calcZ()
         neur.calcSigmoid()
-        #print("   Layer 0 output: " + str(neur.output))
+        # print("   Layer 0 output: " + str(neur.output))
 
     l = 1
     while (l < width):  # Por capa
         n = 0
-        while (n < height[l]): # Por neurona de esta capa
+        while (n < height[l]):  # Por neurona de esta capa
             newInput = ''
-            for i in layers[l-1]:
+            for i in layers[l - 1]:
                 newInput += str(i.output) + ','
 
             print("Layer " + str(l) + " inputs: " + str(newInput))
@@ -185,7 +184,7 @@ def DynamicNetwork():
             layers[l][n].calcZ()
             layers[l][n].calcSigmoid()
 
-            #print("   Layer " + str(l) + " output: " + str(layers[l][n].output))
+            # print("   Layer " + str(l) + " output: " + str(layers[l][n].output))
             n = n + 1
         l += 1
 
@@ -198,6 +197,7 @@ def DynamicNetwork():
         j += 1
 
     return result
+
 
 if __name__ == '__main__':
     # SingleNeuron()
@@ -216,7 +216,7 @@ if __name__ == '__main__':
         height.append(int(input("Num Neurons Layer " + str(i) + ": ")))
         i = i + 1
 
-    network = network_dyn.NetworkDyn(inputs,width,height)
+    network = network_dyn.NetworkDyn(inputs, width, height)
     network.calc_outputs(inputs)
 
     expectation = input("Expected OUtput: ")
@@ -225,5 +225,16 @@ if __name__ == '__main__':
     err = network.calc_error(expectation)
     print("Error margin: " + str(err))
 
-    ## Runnear Backward Propagation
+    learn_rate = input("Learn Rate: ")
+    network.backward_propagation(err, learn_rate)
 
+    num_propagations = input("Number of Backward Propagations: ")
+    for i in range(int(num_propagations)):
+        err = network.calc_error(expectation)
+        network.backward_propagation(err, learn_rate)
+        network.calc_outputs(inputs)
+
+    err = network.calc_error(expectation)
+    print("Final Error Margin: " + str(err))
+
+    ## Runnear Backward Propagation

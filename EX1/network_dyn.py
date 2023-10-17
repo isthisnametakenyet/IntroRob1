@@ -12,11 +12,11 @@ class NetworkDyn:
         while j < height_map[0]:
             weights = []
             for i in range(len(init_inputs)):
-                #weights.append(random.uniform(0, 1))
-                weights.append(1) #DEBUG
+                weights.append(random.uniform(0, 1))
+                #weights.append(1) #DEBUG
 
-            #tmp_layer.append(neuron.Neuron(weights, random.uniform(0, 1)))
-            tmp_layer.append(neuron.Neuron(weights, 1)) #DEBUG
+            tmp_layer.append(neuron.Neuron(weights, random.uniform(0, 1)))
+            #tmp_layer.append(neuron.Neuron(weights, 1)) #DEBUG
             j = j + 1
 
         self.layers[0] = tmp_layer
@@ -29,11 +29,11 @@ class NetworkDyn:
             for n in range(height_map[j]):  # Por neurona de esta capa
                 weights = []
                 for i in range(height_map[j - 1]):  # Por input de la capa anterior
-                    #weights.append(random.uniform(0, 1))
-                    weights.append(1) #DEBUG
+                    weights.append(random.uniform(0, 1))
+                    #weights.append(1) #DEBUG
 
-                #tmp_layer.append(neuron.Neuron(weights, random.uniform(0, 1)))
-                tmp_layer.append(neuron.Neuron(weights, 1)) #DEBUG
+                tmp_layer.append(neuron.Neuron(weights, random.uniform(0, 1)))
+                #tmp_layer.append(neuron.Neuron(weights, 1)) #DEBUG
 
             self.layers.append(tmp_layer)
             j = j + 1
@@ -74,4 +74,16 @@ class NetworkDyn:
         return err
 
     def backward_propagation(self, error, learn_rate):
-        pass
+        print("Error: " + str(error))
+
+        l = len(self.layers) - 2
+        while l >= 0: #Por cada layer menos la ultima
+
+            for n in self.layers[l]: #Por cada neurona de la layer
+                i = 0
+                for w in n.weights: #Por cada weight de la neurona
+                    #print("W: " + str(w) + " i: " + str(i))
+                    n.weights[i] = n.output * float(learn_rate) * float(error[i])
+                    i += 1
+
+            l -= 1

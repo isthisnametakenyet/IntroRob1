@@ -13,10 +13,10 @@ class NetworkDyn:
             weights = []
             for i in range(len(init_inputs)):
                 weights.append(random.uniform(0, 1))
-                #weights.append(1) #DEBUG
+                # weights.append(1) #DEBUG
 
             tmp_layer.append(neuron.Neuron(weights, random.uniform(0, 1)))
-            #tmp_layer.append(neuron.Neuron(weights, 1)) #DEBUG
+            # tmp_layer.append(neuron.Neuron(weights, 1)) #DEBUG
             j = j + 1
 
         self.layers[0] = tmp_layer
@@ -30,15 +30,15 @@ class NetworkDyn:
                 weights = []
                 for i in range(height_map[j - 1]):  # Por input de la capa anterior
                     weights.append(random.uniform(0, 1))
-                    #weights.append(1) #DEBUG
+                    # weights.append(1) #DEBUG
 
                 tmp_layer.append(neuron.Neuron(weights, random.uniform(0, 1)))
-                #tmp_layer.append(neuron.Neuron(weights, 1)) #DEBUG
+                # tmp_layer.append(neuron.Neuron(weights, 1)) #DEBUG
 
             self.layers.append(tmp_layer)
             j = j + 1
 
-        #print(self.layers)
+        # print(self.layers)
 
     def calc_outputs(self, init_inputs):
         for neur in self.layers[0]:  # Usamos el input de teclado para capa 0
@@ -67,23 +67,42 @@ class NetworkDyn:
     def calc_error(self, expectation):
         err = []
         i = 0
+        print("Output: ")
         for exp in expectation:
+            print(str(self.layers[len(self.layers) - 1][i].output))
             err.append(self.layers[len(self.layers) - 1][i].output - float(exp))
             i += 1
+
+        print("Exp: " + str(exp))
+
 
         return err
 
     def backward_propagation(self, error, learn_rate):
         print("Error: " + str(error))
 
-        l = len(self.layers) - 2
-        while l >= 0: #Por cada layer menos la ultima
+        #print("L LEN : " + str(len(self.layers) - 1))
 
-            for n in self.layers[l]: #Por cada neurona de la layer
-                i = 0
-                for w in n.weights: #Por cada weight de la neurona
-                    #print("W: " + str(w) + " i: " + str(i))
-                    n.weights[i] = n.output * float(learn_rate) * float(error[i])
-                    i += 1
-
+        l = len(self.layers) - 1
+        while l >= 0:
+            numW = len(self.layers[l])
+            for w in range(0, numW - 1):  # Por cada Weight de cada Neurona de la layer
+                for n in self.layers[l]:  # Por cada neurona de la layer
+                    #print("L: " + str(l))
+                    if l == len(self.layers) - 1:  # Si es la ultima layer
+                        #print("W: " + str(w) + " err len: " + str(len(error)) + " n weights: " + str(len(n.weights)))
+                        n.weights[w] = n.weights[w] - (float(learn_rate) * float(error[w]) * n.output)
+                        n.z = float(error[w])
+                        n.bias = float(n.bias) - (float(learn_rate) * float(n.z))
+                    else:
+                        z2 = 0
+                        i = 0
+                        for n2 in self.layers[l+1]:
+                            z2 += n2.z * n.weights[i]
+                            i += 1
+                        n.z = z2 * (1 - n.output) * n.output
+                        n.bias = float(n.bias) - (float(learn_rate) * float(n.z))
+                        n.weights[w] = n.weights[w] - (n.z * float(learn_rate) * n.output)
+                        print("W: " + str(n.weights[w]) + " Z: " + str(n.z) + " B: " + str(n.bias))
             l -= 1
+

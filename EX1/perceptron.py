@@ -235,6 +235,5 @@ if __name__ == '__main__':
         network.calc_outputs(inputs)
 
     err = network.calc_error(expectation)
+    print("\n")
     print("Final Error Margin: " + str(err))
-
-    ## Runnear Backward Propagation

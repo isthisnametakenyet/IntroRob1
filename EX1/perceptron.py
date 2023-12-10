@@ -1,7 +1,9 @@
+#!/usr/bin/env python3
+
 import neuron
 import random
 import network_dyn
-import numpy
+#import numpy
 
 
 def SingleNeuron():
@@ -207,23 +209,29 @@ if __name__ == '__main__':
     ## Dynamic Network
     inputs = input("Input the inputs: ")
     inputs = inputs.split(',')
+    # inputs = (1,0)
+
 
     width = int(input("Num Layers: "))
+    width = 1
     height = []
 
     i = 0
     while (i < width):
-        height.append(int(input("Num Neurons Layer " + str(i) + ": ")))
+        height.append(int(input("Num Neurons Layer " + str(i+1) + ": ")))
         i = i + 1
 
-    network = network_dyn.NetworkDyn(inputs, width, height)
-    network.calc_outputs(inputs)
 
     expectation = input("Expected OUtput: ")
     expectation = expectation.split(',')
+    # expectation = (0,1)
+
+    network = network_dyn.NetworkDyn(inputs, width, height, expectation)
+    network.calc_outputs(inputs)
+
 
     err = network.calc_error(expectation)
-    print("Error margin: " + str(err))
+    # print("Error margin: " + str(err))
 
     learn_rate = input("Learn Rate: ")
     network.backward_propagation(err, learn_rate)

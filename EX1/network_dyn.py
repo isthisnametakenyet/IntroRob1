@@ -1,9 +1,11 @@
+#!/usr/bin/env python3
+
 import neuron
 import random
 
 
 class NetworkDyn:
-    def __init__(self, init_inputs, num_layers, height_map):
+    def __init__(self, init_inputs, num_layers, height_map, expectation):
         self.layers = [[]]
 
         ##LAYER 0
@@ -21,11 +23,13 @@ class NetworkDyn:
 
         self.layers[0] = tmp_layer
 
+
         ##OTHER LAYERS
         j = 1
         while j < num_layers:  # Por capa
+            print("j: " + str(j) + " num_layers: " + str(num_layers))
             tmp_layer = []
-
+            
             for n in range(height_map[j]):  # Por neurona de esta capa
                 weights = []
                 for i in range(height_map[j - 1]):  # Por input de la capa anterior
@@ -36,7 +40,25 @@ class NetworkDyn:
                 # tmp_layer.append(neuron.Neuron(weights, 1)) #DEBUG
 
             self.layers.append(tmp_layer)
+            print("Height: " + str(height_map[j]) + " ")
+
             j = j + 1
+        
+
+        ##ULTIMA LAYER
+        j = num_layers
+        tmp_layer = []
+        
+        for n in range(len(expectation)):  # Por neurona de esta capa
+            weights = []
+            for i in range(height_map[j-1]):  # Por input de la capa anterior
+                weights.append(random.uniform(0, 1))
+                # weights.append(1) #DEBUG
+
+            tmp_layer.append(neuron.Neuron(weights, random.uniform(0, 1)))
+            # tmp_layer.append(neuron.Neuron(weights, 1)) #DEBUG
+
+        self.layers.append(tmp_layer)
 
         # print(self.layers)
 
@@ -55,11 +77,12 @@ class NetworkDyn:
                 for i in self.layers[l - 1]:
                     newInput += str(i.output) + ','
 
-                print("Layer " + str(l) + " inputs: " + str(newInput))
+                # print("Layer " + str(l) + " inputs: " + str(newInput))
 
                 self.layers[l][n].addInputs(newInput.split(','))
                 self.layers[l][n].calcZ()
                 self.layers[l][n].calcSigmoid()
+                print("   Layer " + str(l) +  " output: " + str(self.layers[l][n].output))
 
                 n = n + 1
             l += 1
@@ -70,11 +93,10 @@ class NetworkDyn:
         print("Output: ")
         for exp in expectation:
             print(str(self.layers[len(self.layers) - 1][i].output))
-            err.append(self.layers[len(self.layers) - 1][i].output - float(exp))
+            error_tmp = self.layers[len(self.layers) - 1][i].output - float(exp)
+            err.append(error_tmp)
             i += 1
-
-        print("Exp: " + str(exp))
-
+            # print("Exp: " + str(exp) + " Err: " + str(error_tmp))
 
         return err
 
@@ -84,16 +106,20 @@ class NetworkDyn:
         #print("L LEN : " + str(len(self.layers) - 1))
 
         l = len(self.layers) - 1
+        print("NumL: " + str(len(self.layers)) + " Weigths L 0: " + str(len(self.layers[0][0].weights)) + " Weigths L 1: " + str(len(self.layers[1][0].weights)))
         while l >= 0:
-            numW = len(self.layers[l])
-            for w in range(0, numW - 1):  # Por cada Weight de cada Neurona de la layer
+            numW = len(self.layers[l][0].weights) # Numero de weights de cada neurona de la layer
+            print("NumW: " + str(numW))
+            for w in range(0, numW):  # Por cada Weight de cada Neurona de la layer
+                numN = 0
                 for n in self.layers[l]:  # Por cada neurona de la layer
-                    #print("L: " + str(l))
+                    print("Layer: " + str(l) + " Weight: " + str(w) + " Neuron: " + str(n))
                     if l == len(self.layers) - 1:  # Si es la ultima layer
-                        #print("W: " + str(w) + " err len: " + str(len(error)) + " n weights: " + str(len(n.weights)))
-                        n.weights[w] = n.weights[w] - (float(learn_rate) * float(error[w]) * n.output)
-                        n.z = float(error[w])
+                        # print("Neu Weights: " + str(len(n.weights)) + " Errors: " + str(len(error)))
+                        n.weights[w] = n.weights[w] - (float(learn_rate) * float(error[numN]) * n.output)
+                        n.z = float(error[numN])
                         n.bias = float(n.bias) - (float(learn_rate) * float(n.z))
+                        numN += 1
                     else:
                         z2 = 0
                         i = 0
